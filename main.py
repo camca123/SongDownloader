@@ -1,4 +1,5 @@
 from apiclient.discovery import build
+from collections import namedtuple
 import time
 import pafy
 
@@ -29,11 +30,35 @@ def youtube_search(query, max_results):
         pafy_vid_list.append(video)
 #-----------------------------------------------------------------------
 
-youtube_search("google", 2)
+youtube_search(raw_input('Enter a song to search: '), 10)
 
 for videos in pafy_vid_list:
-    vid_duration_list.append(videos.duration)
+    hrs = ''
+    mins = ''
+    secs = ''
+    c = 0
+    while c < len(videos.duration):
+        if (videos.duration[c] != ':'):
+            hrs += videos.duration[c]
+        else:
+            c+=1
+            break
+        c+=1
+    while c < len(videos.duration):
+        if (videos.duration[c] != ':'):
+            mins += videos.duration[c]
+        else:
+            c+=1
+            break
+        c+=1
+    while c < len(videos.duration):
+        if (videos.duration[c] != ':'):
+            secs += videos.duration[c]
+        else:
+            c+=1
+            break
+        c+=1
+    vid_duration_list.append((int(hrs)*60*60)+(int(mins)*60)+int(secs))
 
 print "\n".join(search_videos), "\n"
-print "\n".join(vid_url_list), "\n"
-print "\n".join(vid_duration_list), "\n"
+print vid_duration_list, "\n"
