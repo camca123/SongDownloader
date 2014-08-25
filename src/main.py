@@ -1,11 +1,13 @@
 import pafyDemVids
 
-vid_duration_list = []
+pafy_vids = []
 vid_duration_secs = []
 
-vid_duration_list = pafyDemVids.pafyAllTheVids(raw_input('Enter a song to search: '), raw_input('Max Results(~10?): '))
+pafy_vids = pafyDemVids.pafyAllTheVids(raw_input('Enter a song to search: '), raw_input('Max Results(~10?): '))
+print "\n\n"
 
-for videos in vid_duration_list:
+
+for videos in pafy_vids:
     hrs = ''
     mins = ''
     secs = ''
@@ -35,4 +37,5 @@ for videos in vid_duration_list:
     
 vid_duration_secs.sort()
 
-print vid_duration_secs, "\n"
+for i,vid in enumerate(pafy_vids):
+    print vid.title, "\t", vid_duration_secs[i], "seconds"
