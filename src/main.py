@@ -45,16 +45,11 @@ while(swapped):
             swapped = True
         n+=1
 
-
-for vid in videoList:
-    print vid[0].title, "\t", vid[1], "seconds"
+n = 0
+while n < len(videoList)-1:
+    videoList[n][2] = videoList[n+1][1]-videoList[n][1]
+    n+=1
 
 print "\n\n"
-
-differences = []
-i = 0
-while i < len(vid_duration_secs)-1:
-    differences.append(vid_duration_secs[i+1]-vid_duration_secs[i])
-    i+=1
-
-#print differences
+for vid in videoList:
+    print vid[0].title, "\n", "S: ", vid[1], "\t", "Diff: ", vid[2]
