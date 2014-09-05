@@ -75,36 +75,44 @@ for vid in videoList:
         numGoodVideos += 1
 if (numGoodVideos == 0):
     print "Couldn't find any videos!"
-    sys.exit()
+    exit()
 
 for vid in videoList:
     print vid[0].title, "\n", "S: ", vid[1], "\t", "Diff: ", vid[2]
 print "\n\n"
 
+print "Making streams..."
 streams = []
 n = 0
 while (n < numGoodVideos):
+    print n+1
     streams.append([videoList[n][0], videoList[n][0].getbestaudio()])
     n+=1
-
+print "Done!", numGoodVideos, " good videos"
 #Stream list: [pafy video, video stream]
 
+print "Organizing by bitrate..."
 swapped = True
 while(swapped):
     swapped = False
     n = 0
-    while(n < len(streams)-1):
+    while(n < numGoodVideos-1):
         if (streams[n][1].rawbitrate > streams[n+1][1].rawbitrate):
             temp = videoList[n]
             videoList[n] = videoList[n+1]
             videoList[n+1] = temp
             swapped = True
         n+=1
+    for stream in streams:
+        print stream[0].title, "\n", stream[1].rawbitrate
+print "Done!"
 
 def mycb(total, recvd, ratio, rate, eta):
     print(eta, " seconds left...")
 
+print "Downloading!"
 streams[0][1].download(downloadFolder, quiet=True, callback=mycb)
+#streams[0][1].download(downloadFolder)
 
 
 
