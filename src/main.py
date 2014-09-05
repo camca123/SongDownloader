@@ -98,9 +98,9 @@ while(swapped):
     n = 0
     while(n < numGoodVideos-1):
         if (streams[n][1].rawbitrate > streams[n+1][1].rawbitrate):
-            temp = videoList[n]
-            videoList[n] = videoList[n+1]
-            videoList[n+1] = temp
+            temp = streams[n]
+            streams[n] = streams[n+1]
+            streams[n+1] = temp
             swapped = True
         n+=1
     for stream in streams:
