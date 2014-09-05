@@ -2,13 +2,23 @@
 #Written by Cameron Swinoga
 #Meant to automatically search Youtube for a song, download it, and add metadata to it
 
-differenceThreshold = 10
-downloadFolder = 'C:\Users\Cameron\Desktop\Music\Maybe'
-
 import pafyDemVids
+import file_reader
 import pafy
+import os
+import re
 
-videoList = pafyDemVids.pafyAllTheVids(raw_input('Enter a song to search: '), raw_input('Max Results(~10?): '))
+downloadFolder = file_reader.readFromFile("musicDirectory")
+differenceThreshold = int(file_reader.readFromFile("differenceThreshold"))
+
+print "Download Folder is:", downloadFolder
+print "Difference threshold:", differenceThreshold
+
+if (downloadFolder == "Err"):
+    print "Error with config file!"
+    exit()
+
+videoList = pafyDemVids.pafyAllTheVids(raw_input('Enter a song to search: '), raw_input('Max Results(~5?): '))
 #[pafyVideo, duration in seconds, time difference between videos]
 print "\n\n"
 
@@ -74,7 +84,7 @@ for vid in videoList:
     if (vid[2] < differenceThreshold):
         numGoodVideos += 1
 if (numGoodVideos == 0):
-    print "Couldn't find any videos!"
+    print "Couldn't find any good songs!"
     exit()
 
 for vid in videoList:
@@ -85,10 +95,9 @@ print "Making streams..."
 streams = []
 n = 0
 while (n < numGoodVideos):
-    print n+1
-    streams.append([videoList[n][0], videoList[n][0].getbestaudio()])
+    streams.append([videoList[n][0], videoList[n][0].getbestaudio("m4a")])
     n+=1
-print "Done!", numGoodVideos, " good videos"
+print "Done!", numGoodVideos, "good videos"
 #Stream list: [pafy video, video stream]
 
 print "Organizing by bitrate..."
@@ -109,8 +118,9 @@ def mycb(total, recvd, ratio, rate, eta):
     print eta, " seconds left..."
 
 print "Downloading!"
+print repr(downloadFolder)
 streams[0][1].download(downloadFolder, quiet=True)
-#streams[0][1].download(downloadFolder)
 print "Downloaded to", downloadFolder
 
-
+print "Starting beets to add metadata... Title is \"", streams[0][0].title, "\""
+os.system("beet import "+downloadFolder)

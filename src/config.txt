@@ -1,0 +1,4 @@
+musicDirectory
+C:\Users\Cameron\Desktop\Music
+differenceThreshold
+10
