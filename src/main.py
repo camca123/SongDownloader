@@ -103,16 +103,14 @@ while(swapped):
             streams[n+1] = temp
             swapped = True
         n+=1
-    for stream in streams:
-        print stream[0].title, "\n", stream[1].rawbitrate
 print "Done!"
 
 def mycb(total, recvd, ratio, rate, eta):
-    print(eta, " seconds left...")
+    print eta, " seconds left..."
 
 print "Downloading!"
-streams[0][1].download(downloadFolder, quiet=True, callback=mycb)
+streams[0][1].download(downloadFolder, quiet=True)
 #streams[0][1].download(downloadFolder)
-
+print "Downloaded to", downloadFolder
 
 
