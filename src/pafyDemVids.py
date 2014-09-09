@@ -23,5 +23,5 @@ def pafyAllTheVids(query, max_results):
         search_videos.append(search_result["snippet"]["title"])
         vid_url_list.append("https://www.youtube.com/watch?v="+search_result["id"]["videoId"])
         video = pafy.new(vid_url_list[-1])
-        pafy_vid_list.append([video, -1, 5000])
+        pafy_vid_list.append([video, -1, 9999])
     return pafy_vid_list
