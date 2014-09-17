@@ -16,14 +16,16 @@ class openSearchDialog(wx.Dialog):
         self.search = wx.StaticText(self, label = "Search string: ")
         hSizer.Add(self.search)
         
-        self.textInput = wx.TextCtrl(self)
+        self.textInput = wx.TextCtrl(self, size=(150, -1))
         self.Bind(wx.EVT_TEXT, self.QueryChange, self.textInput)
         hSizer.Add(self.textInput)
 
+        hSizer.AddSpacer(10)
+        
         self.maxResults = wx.StaticText(self, label = "Max Results: ")
         hSizer.Add(self.maxResults)
         
-        self.maxInput = wx.TextCtrl(self)
+        self.maxInput = wx.TextCtrl(self, size=(30, -1))
         self.Bind(wx.EVT_TEXT, self.MaxChange, self.maxInput)
         hSizer.Add(self.maxInput)
 
@@ -34,7 +36,7 @@ class openSearchDialog(wx.Dialog):
         mainSizer.Add(self.okButton, 0, wx.CENTER)
         self.SetSizerAndFit(mainSizer)
 
-        self.SetSize((390, 100))
+        self.SetSize((350, 100))
         self.SetTitle("Search for a song")
 
     def QueryChange(self, event):
@@ -63,9 +65,9 @@ class openPlaylistDialog(wx.Dialog):
         self.info = wx.StaticText(self, label = "Input: ")
         hSizer.Add(self.info)
         
-        self.textInput = wx.TextCtrl(self)
+        self.textInput = wx.TextCtrl(self, size=(300, -1))
         self.Bind(wx.EVT_TEXT, self.OnChange, self.textInput)
-        hSizer.Add(self.textInput)
+        hSizer.Add(self.textInput, 1)
 
         self.okButton = wx.Button(self, label = "Open Playlist")
         self.Bind(wx.EVT_BUTTON, self.OnClose, self.okButton)
@@ -74,7 +76,7 @@ class openPlaylistDialog(wx.Dialog):
         mainSizer.Add(self.okButton, 0, wx.CENTER)
         self.SetSizerAndFit(mainSizer)
 
-        self.SetSize((200, 100))
+        self.SetSize((350, 100))
         self.SetTitle("Input playlist URL")
 
     def OnChange(self, event):
@@ -131,9 +133,9 @@ class MainPanel(wx.Panel):
     def addMetadata(self, event):
         songDownloader.organizeMusic()
 
-#app = wx.App(redirect = 1, filename = "errorLog.txt")
-app = wx.App(None)
-frame = wx.Frame(None, wx.ID_ANY, "Title")
+app = wx.App(redirect = 1, filename = "errorLog.txt")
+#app = wx.App(None)
+frame = wx.Frame(None, wx.ID_ANY, "Youtube Song Downloader")
 panel = MainPanel(frame)
 frame.Show()
 app.MainLoop()
