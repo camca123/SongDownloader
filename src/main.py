@@ -175,7 +175,7 @@ class MainPanel(wx.Panel):
 
 try:
     os.remove("errorLog.txt")
-except WindowsError:
+except:
     True = True
 app = wx.App(redirect = 1, filename = "errorLog.txt")
 frame = wx.Frame(None, wx.ID_ANY, "Youtube Song Downloader")
