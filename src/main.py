@@ -5,6 +5,7 @@
 import songDownloader
 import wx
 import file_reader
+import os
 #import pafy
 
 playlistString = ""
@@ -172,8 +173,11 @@ class MainPanel(wx.Panel):
     def addMetadata(self, event):
         songDownloader.organizeMusic()
 
+try:
+    os.remove("errorLog.txt")
+except WindowsError:
+    True = True
 app = wx.App(redirect = 1, filename = "errorLog.txt")
-#app = wx.App(None)
 frame = wx.Frame(None, wx.ID_ANY, "Youtube Song Downloader")
 panel = MainPanel(frame)
 frame.Show()
