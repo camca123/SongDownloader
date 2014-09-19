@@ -1,7 +1,3 @@
-#SongDownloader
-#Written by Cameron Swinoga
-#Meant to automatically search Youtube for a song, download it, and add metadata to it
-
 import pafyDemVids
 import videoFinderDownloader
 import file_reader
@@ -9,6 +5,7 @@ import pafy
 import os
 
 downloadFolder = ""
+dinfo = []
 
 def init():
     global downloadFolder
@@ -27,8 +24,10 @@ def searchVideos(query, maxResults):
 
     videoList = pafyDemVids.pafyAllTheVids(query, maxResults)
     #[pafyVideo, duration in seconds, time difference between videos]
-    videoFinderDownloader.downloadBestVideo(videoList, downloadFolder, differenceThreshold)
-
+    #videoFinderDownloader.downloadBestVideo(videoList, downloadFolder, differenceThreshold)
+    stream = videoFinderDownloader.downloadBestVideo(videoList, downloadFolder, differenceThreshold)
+    return stream
+        
 def organizeMusic():
     init()
     global downloadFolder
@@ -38,10 +37,11 @@ def downloadPlaylist(playlistURL):
     init()
     global downloadFolder
     playlist = pafy.get_playlist(playlistURL)
+    return playlist
     
-    for i in range(0, len(playlist['items'])):
-        print playlist['items'][i]['pafy'].title
-        stream = playlist['items'][i]['pafy'].getbestaudio("m4a")
-        print "Downloading!"
-        stream.download(downloadFolder, quiet = True)
-        print "Downloaded to", downloadFolder
+##    for i in range(0, len(playlist['items'])):
+##        print playlist['items'][i]['pafy'].title
+##        stream = playlist['items'][i]['pafy'].getbestaudio("m4a")
+##        print "Downloading!"
+##        stream.download(downloadFolder, quiet = True)
+##        print "Downloaded to", downloadFolder

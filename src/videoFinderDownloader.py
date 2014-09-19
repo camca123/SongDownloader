@@ -94,9 +94,7 @@ def downloadBestVideo(videoList, downloadFolder, differenceThreshold):
             n+=1
     print "Done!"
 
-    def mycb(total, recvd, ratio, rate, eta):
-        print eta, " seconds left..."
-
     print "Downloading!"
-    streams[0][1].download(downloadFolder, quiet = True)
+    #streams[0][1].download(downloadFolder, quiet = True)
+    return streams[0][1]
     print "Downloaded to", downloadFolder

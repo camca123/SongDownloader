@@ -1,5 +1,11 @@
+#SongDownloader
+#Written by Cameron Swinoga
+#Meant to automatically search Youtube for a song, download it, and add metadata to it
+
 import songDownloader
 import wx
+import file_reader
+#import pafy
 
 playlistString = ""
 searchString = ""
@@ -13,6 +19,8 @@ class openSearchDialog(wx.Dialog):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         hSizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        self.directory = wx.StaticText(self, label = file_reader.readFromFile("musicDirectory"))
+        
         self.search = wx.StaticText(self, label = "Search string: ")
         hSizer.Add(self.search)
         
@@ -29,16 +37,22 @@ class openSearchDialog(wx.Dialog):
         self.Bind(wx.EVT_TEXT, self.MaxChange, self.maxInput)
         hSizer.Add(self.maxInput)
 
-        self.okButton = wx.Button(self, label = "Search and Download!")
-        self.Bind(wx.EVT_BUTTON, self.OnClose, self.okButton)
+        self.progressGauge = wx.Gauge(self, -1, 100, (100, 100), (250, 25))
         
+        self.downloadButton = wx.Button(self, label = "Search and Download!")
+        self.Bind(wx.EVT_BUTTON, self.OnDownload, self.downloadButton)
+
         mainSizer.Add(hSizer, 0, wx.ALL, 5)
-        mainSizer.Add(self.okButton, 0, wx.CENTER)
+        mainSizer.Add(self.progressGauge, 0, wx.CENTER)
+        mainSizer.Add(self.directory, 0, wx.CENTER)
+        mainSizer.Add(self.downloadButton, 0, wx.CENTER)
         self.SetSizerAndFit(mainSizer)
 
-        self.SetSize((350, 100))
+        self.SetSize((350, 150))
         self.SetTitle("Search for a song")
-
+        
+    
+        
     def QueryChange(self, event):
         global searchString
         searchString = event.GetString()
@@ -47,13 +61,18 @@ class openSearchDialog(wx.Dialog):
         global maxResults
         maxResults = event.GetString()
         
-    def OnClose(self, event):
+    def OnDownload(self, event):
+        def UpdateGauge(total, recvd, ratio, rate, eta):
+            self.progressGauge.SetValue((total/recvd)*100)
+            
         global searchString
         global maxResults
+        downloadFolder = file_reader.readFromFile("musicDirectory")
         songDownloader.init()
-        songDownloader.searchVideos(searchString, maxResults)
+        stream = songDownloader.searchVideos(searchString, maxResults)
+        stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
         self.Destroy()
-
+    
 class openPlaylistDialog(wx.Dialog):
     def __init__(self, *args, **kw):
         super(openPlaylistDialog, self).__init__(*args, **kw)
@@ -69,23 +88,43 @@ class openPlaylistDialog(wx.Dialog):
         self.Bind(wx.EVT_TEXT, self.OnChange, self.textInput)
         hSizer.Add(self.textInput, 1)
 
-        self.okButton = wx.Button(self, label = "Open Playlist")
-        self.Bind(wx.EVT_BUTTON, self.OnClose, self.okButton)
+        self.g1 = wx.Gauge(self, -1, 100, (100, 100), (250, 25))
+        self.g2 = wx.Gauge(self, -1, 100, (100, 100), (250, 25))
+
+        self.directory = wx.StaticText(self, label = file_reader.readFromFile("musicDirectory"))
+
+        self.downloadButton = wx.Button(self, label = "Open Playlist")
+        self.Bind(wx.EVT_BUTTON, self.OnDownload, self.downloadButton)
         
         mainSizer.Add(hSizer, 0, wx.ALL, 5)
-        mainSizer.Add(self.okButton, 0, wx.CENTER)
+        mainSizer.Add(self.g1, 0, wx.CENTER)
+        mainSizer.Add(self.g2, 0, wx.CENTER)
+        mainSizer.Add(self.directory, 0, wx.CENTER)
+        mainSizer.Add(self.downloadButton, 0, wx.CENTER)
         self.SetSizerAndFit(mainSizer)
 
-        self.SetSize((350, 100))
+        self.SetSize((350, 150))
         self.SetTitle("Input playlist URL")
 
     def OnChange(self, event):
         global playlistString
         playlistString = event.GetString()
-    def OnClose(self, event):
+    def OnDownload(self, event):
+        def UpdateGauge(total, recvd, ratio, rate, eta):
+            self.g2.SetValue((total/recvd)*100)
+        
         global playlistString
+        downloadFolder = file_reader.readFromFile("musicDirectory")
         songDownloader.init()
-        songDownloader.downloadPlaylist(playlistString)
+        playlist = songDownloader.downloadPlaylist(playlistString)
+        for i in range(0, len(playlist['items'])):
+            self.g1.SetValue(((i+1.0)/len(playlist['items']))*100)
+            wx.Yield()
+            stream = playlist['items'][i]['pafy'].getbestaudio("m4a")
+            wx.Yield()
+            self.g2.SetValue(0)
+            stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
+            wx.Yield()
         self.Destroy()
         
 class MainPanel(wx.Panel):
