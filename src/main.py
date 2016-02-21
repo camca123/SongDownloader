@@ -144,7 +144,11 @@ class openPlaylistDialog(wx.Dialog):
                     except AttributeError, e:
                         print "Error downloading song #" + str(i+1) + ": " + str(e)
             except:
-                print "Something went wrong (Region restricted/file already exists)"
+                try:
+                    os.remove(stream.title + ".temp")
+                    print "File already exists (" + stream.title + ")"
+                except:
+                    print "Something went wrong (Region restricted?)"
             
         self.Destroy()
         
