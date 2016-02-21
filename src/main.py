@@ -145,8 +145,9 @@ class openPlaylistDialog(wx.Dialog):
                         print "Error downloading song #" + str(i+1) + ": " + str(e)
             except:
                 try:
-                    os.remove(stream.title + ".temp")
-                    print "File already exists (" + stream.title + ")"
+                    print "Removing: " + downloadFolder + "\\" + stream.title + "." + stream.extension + ".temp"
+                    os.remove(downloadFolder + "\\" + stream.title + "." + stream.extension + ".temp")
+                    print "File already exists (" + stream.title + stream.extension + ")"
                 except:
                     print "Something went wrong (Region restricted?)"
             
