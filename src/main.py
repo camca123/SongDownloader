@@ -126,22 +126,25 @@ class openPlaylistDialog(wx.Dialog):
             self.g1.SetValue(((i+1.0)/len(playlist['items']))*100)
             wx.Yield()
             try:
-                stream = playlist['items'][i]['pafy'].getbestaudio("m4a")
-                wx.Yield()
-                self.g2.SetValue(0)
-                stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
-                wx.Yield()
-            except AttributeError, e:
-                print "Error downloading song #" + str(i+1) + ": " + str(e)
-                print "Trying again with any format..."
                 try:
-                    stream = playlist['items'][i]['pafy'].getbestaudio("any")
+                    stream = playlist['items'][i]['pafy'].getbestaudio("m4a")
                     wx.Yield()
                     self.g2.SetValue(0)
                     stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
                     wx.Yield()
                 except AttributeError, e:
                     print "Error downloading song #" + str(i+1) + ": " + str(e)
+                    print "Trying again with any format..."
+                    try:
+                        stream = playlist['items'][i]['pafy'].getbestaudio("any")
+                        wx.Yield()
+                        self.g2.SetValue(0)
+                        stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
+                        wx.Yield()
+                    except AttributeError, e:
+                        print "Error downloading song #" + str(i+1) + ": " + str(e)
+            except:
+                print "Something went wrong (Region restricted/file already exists)"
             
         self.Destroy()
         
