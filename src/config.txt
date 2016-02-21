@@ -1,4 +1,6 @@
-musicDirectory
-C:\Users\Cameron\Desktop\Music
-differenceThreshold
+musicDirectory:
+C:\Users\Cameron Swinoga\Music
+differenceThreshold:
 10
+convertDirectory:
+C:\Users\Cameron Swinoga

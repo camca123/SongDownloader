@@ -68,10 +68,14 @@ class openSearchDialog(wx.Dialog):
             
         global searchString
         global maxResults
+        
         downloadFolder = file_reader.readFromFile("musicDirectory")
         songDownloader.init()
+        
         stream = songDownloader.searchVideos(searchString, maxResults)
-        stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
+        if (stream == 0):
+            self.Destroy()
+        stream.download(downloadFolder, quiet = False, callback = UpdateGauge)
         self.Destroy()
     
 class openPlaylistDialog(wx.Dialog):
@@ -121,11 +125,24 @@ class openPlaylistDialog(wx.Dialog):
         for i in range(0, len(playlist['items'])):
             self.g1.SetValue(((i+1.0)/len(playlist['items']))*100)
             wx.Yield()
-            stream = playlist['items'][i]['pafy'].getbestaudio("m4a")
-            wx.Yield()
-            self.g2.SetValue(0)
-            stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
-            wx.Yield()
+            try:
+                stream = playlist['items'][i]['pafy'].getbestaudio("m4a")
+                wx.Yield()
+                self.g2.SetValue(0)
+                stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
+                wx.Yield()
+            except AttributeError, e:
+                print "Error downloading song #" + str(i+1) + ": " + str(e)
+                print "Trying again with any format..."
+                try:
+                    stream = playlist['items'][i]['pafy'].getbestaudio("any")
+                    wx.Yield()
+                    self.g2.SetValue(0)
+                    stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
+                    wx.Yield()
+                except AttributeError, e:
+                    print "Error downloading song #" + str(i+1) + ": " + str(e)
+            
         self.Destroy()
         
 class MainPanel(wx.Panel):
@@ -148,9 +165,13 @@ class MainPanel(wx.Panel):
         self.metaButton = wx.Button(self, label = "Add Metadata")
         self.Bind(wx.EVT_BUTTON, self.addMetadata, self.metaButton)
 
+        self.converterButton = wx.Button(self, label = "Convert songs to mp3")
+        self.Bind(wx.EVT_BUTTON, self.convertFiles, self.converterButton)
+
         vSizer.Add(self.playlistButton)
         vSizer.Add(self.songButton)
-        vSizer.Add(self.metaButton)
+        #vSizer.Add(self.metaButton)
+        vSizer.Add(self.converterButton)
         
         hSizer.Add(grid, 0, wx.ALL, 5)
         hSizer.Add(self.logger)
@@ -173,11 +194,14 @@ class MainPanel(wx.Panel):
     def addMetadata(self, event):
         songDownloader.organizeMusic()
 
+    def convertFiles(self, event):
+        songDownloader.convertMusic()
+
 try:
-    os.remove("errorLog.txt")
+    os.remove("outputLog.txt")
 except:
-    True = True
-app = wx.App(redirect = 1, filename = "errorLog.txt")
+    pass
+app = wx.App(redirect = False, filename = "outputLog.txt")
 frame = wx.Frame(None, wx.ID_ANY, "Youtube Song Downloader")
 panel = MainPanel(frame)
 frame.Show()

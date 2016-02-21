@@ -1,7 +1,7 @@
 import re
 
 def readFromFile (query):
-    query = query+"\n"
+    query = query+":\n"
     file_obj = open("config.txt", "r")
     eof = False
     while (not eof):

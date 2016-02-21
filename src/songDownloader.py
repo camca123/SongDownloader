@@ -33,6 +33,13 @@ def organizeMusic():
     global downloadFolder
     os.system("beet import -i "+downloadFolder)
 
+def convertMusic():
+    init()
+    global downloadFolder
+    command = "for /r %f in (*.m4a) do " + downloadFolder + " -i \"%f \" -acodec libmp3lame -ab 320k \"" + file_reader.readFromFile("convertDirectory") + "\\%~nf.mp3\""
+    print (command)
+    os.system(command)
+    
 def downloadPlaylist(playlistURL):
     init()
     global downloadFolder

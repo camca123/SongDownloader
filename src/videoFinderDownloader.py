@@ -29,6 +29,7 @@ def downloadBestVideo(videoList, downloadFolder, differenceThreshold):
                 break
             c+=1
         videos[1] = (int(hrs)*60*60)+(int(mins)*60)+int(secs)
+        print videos[1]
         
     swapped = True
     while(swapped):
@@ -75,7 +76,7 @@ def downloadBestVideo(videoList, downloadFolder, differenceThreshold):
     streams = []
     n = 0
     while (n < numGoodVideos):
-        streams.append([videoList[n][0], videoList[n][0].getbestaudio("m4a")])
+        streams.append([videoList[n][0], videoList[n][0].getbestaudio("mp4")])
         n+=1
     print "Done!", numGoodVideos, "good videos"
     #Stream list: [pafy video, video stream]
@@ -86,11 +87,14 @@ def downloadBestVideo(videoList, downloadFolder, differenceThreshold):
         swapped = False
         n = 0
         while(n < numGoodVideos-1):
-            if (streams[n][1].rawbitrate > streams[n+1][1].rawbitrate):
-                temp = streams[n]
-                streams[n] = streams[n+1]
-                streams[n+1] = temp
-                swapped = True
+            try:
+                if (streams[n][1].rawbitrate > streams[n+1][1].rawbitrate):
+                    temp = streams[n]
+                    streams[n] = streams[n+1]
+                    streams[n+1] = temp
+                    swapped = True
+            except:
+                pass
             n+=1
     print "Done!"
 
