@@ -133,16 +133,23 @@ class openPlaylistDialog(wx.Dialog):
                     stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
                     wx.Yield()
                 except AttributeError, e:
-                    print "Error downloading song #" + str(i+1) + ": " + str(e)
-                    print "Trying again with any format..."
                     try:
-                        stream = playlist['items'][i]['pafy'].getbestaudio("any")
+                        stream = playlist['items'][i]['pafy'].getbestaudio("ogg")
                         wx.Yield()
                         self.g2.SetValue(0)
                         stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
                         wx.Yield()
+                        print "Had to download with ogg instad of m4a"
                     except AttributeError, e:
-                        print "Error downloading song #" + str(i+1) + ": " + str(e)
+                        try:
+                            stream = playlist['items'][i]['pafy'].getbestaudio()
+                            wx.Yield()
+                            self.g2.SetValue(0)
+                            stream.download(downloadFolder, quiet = True, callback = UpdateGauge)
+                            wx.Yield()
+                            print "Had to download with something (" + stream.extension + ") instad of m4a or ogg"
+                        except:
+                            print "Error downloading song #" + str(i+1) + ": " + str(e)
             except:
                 try:
                     print "Removing: " + downloadFolder + "\\" + stream.title + "." + stream.extension + ".temp"
